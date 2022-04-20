@@ -1,0 +1,32 @@
+package net.pryszawa.codegen.model
+
+data class SchemaObject(
+    val `$ref`: String?,
+    val type: Type?,
+    val allOf: List<SchemaObject>?,
+    val oneOf: List<SchemaObject>?,
+    val anyOf: List<SchemaObject>?,
+    val not: List<SchemaObject>?,
+    val items: SchemaObject?,
+    val properties: Map<String, SchemaObject>?,
+    val additionalProperties: Map<String, SchemaObject>?,
+    val description: String?,
+    val format: Format?,
+    val default: String?, // FIXME: allow any object
+    val title: String?,
+    val multipleOf: Int?,
+    val maximum: Int?,
+    val exclusiveMaximum: Int?,
+    val minimum: Int?,
+    val exclusiveMinimum: Int?,
+    val maxLength: Int?,
+    val minLength: Int?,
+    val pattern: String?,
+    val maxItems: Int?,
+    val minItems: Int?,
+    val uniqueItems: Int?,
+    val maxProperties: Int?,
+    val minProperties: Int?,
+    val required: Boolean?,
+    val enum: List<String>?,
+)
