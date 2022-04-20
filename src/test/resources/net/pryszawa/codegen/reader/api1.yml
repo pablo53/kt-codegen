@@ -1,0 +1,37 @@
+openapi: 3.0.1
+info:
+  title: kt-codegen test
+  description:  Open API 3 Kotlin Code Generator Test
+  version: 1.0.0
+  contact:
+    name: pablo53
+    url: https://guthub.com/pablo53/kt-codegen
+servers:
+  - url: http://localhost:8080/api/v1
+    description: API V1
+security:
+  - OAuth2:
+      - testscope1
+paths:
+  /diag/echo/{message}:
+    get:
+      security:
+        - OAuth2:
+            - testscope1
+      tags:
+        - DiagnosticV1
+        - EchoV1
+      summary: "Diagnostic echo endpoint"
+      operationId: getEcho
+      parameters:
+        - name: message
+          in: query
+          description: "Message to be returned as echo"
+          required: true
+      responses:
+        200:
+          description: Ok
+          content:
+            'text/plain':
+              schema:
+                type: string

@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation group: "org.yaml", name: "snakeyaml", version: "1.30"
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
