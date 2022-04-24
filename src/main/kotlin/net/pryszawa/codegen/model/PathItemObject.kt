@@ -13,5 +13,5 @@ data class PathItemObject(
     val patch: OperationObject?,
     val trace: OperationObject?,
     val servers: List<ServerObject>?,
-    val parameters: List<ParameterObject>
+    val parameters: List<ParameterObject>?,
 )

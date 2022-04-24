@@ -3,7 +3,7 @@ package net.pryszawa.codegen.model
 data class ParameterObject(
     val `$ref`: String?, // REQUIRED if all the other ones are not provided
     val name: String?, // REQUIRED, if $ref not provided
-    val `in`: String?, // REQUIRED, if $ref not provided
+    val `in`: ParameterLocation?, // REQUIRED, if $ref not provided
     val description: String?,
     val required: Boolean = false, // MUST equal to true, if in="path"
     val deprecated: Boolean = false,

@@ -2,8 +2,8 @@ package net.pryszawa.codegen.model
 
 data class OpenAPI3(
     val openapi: String,
-    val info: Info,
-    val servers: List<ServerObject>,
+    val info: InfoObject,
+    val servers: List<ServerObject>?,
     val paths: Map<String, PathItemObject>,
     val components: ComponentObjects?,
     val security: List<SecurityRequirementObject>?,
