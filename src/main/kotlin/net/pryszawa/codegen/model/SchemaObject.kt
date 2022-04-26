@@ -29,4 +29,11 @@ data class SchemaObject(
     val minProperties: Int?,
     val required: Boolean?,
     val enum: List<String>?,
+    val nullable: Boolean = false,
+    val discriminator: DiscriminatorObject?,
+    val readOnly: Boolean = false,
+    val writeOnly: Boolean = false,
+    val xml: XMLObject?,
+    val example: Any?,
+    val deprecated: Boolean = false,
 )

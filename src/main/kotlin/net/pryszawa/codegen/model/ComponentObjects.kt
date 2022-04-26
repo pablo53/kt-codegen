@@ -10,4 +10,5 @@ data class ComponentObjects(
     val securitySchemes: Map<String, SecuritySchemeObject>?,
     val links: Map<String, LinkObject>?,
     val callbacks: Map<String, CallbackObject>?,
+    val pathItems: Map<String, PathItemObject>?,
 )

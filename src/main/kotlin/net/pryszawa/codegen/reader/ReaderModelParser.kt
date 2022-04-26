@@ -3,6 +3,7 @@ package net.pryszawa.codegen.reader
 import net.pryszawa.codegen.model.CallbackObject
 import net.pryszawa.codegen.model.ComponentObjects
 import net.pryszawa.codegen.model.Contact
+import net.pryszawa.codegen.model.DiscriminatorObject
 import net.pryszawa.codegen.model.EncodingObject
 import net.pryszawa.codegen.model.ExampleObject
 import net.pryszawa.codegen.model.ExternalDocumentationObject
@@ -29,21 +30,27 @@ import net.pryszawa.codegen.model.ServerVariableOject
 import net.pryszawa.codegen.model.Style
 import net.pryszawa.codegen.model.TagObject
 import net.pryszawa.codegen.model.Type
+import net.pryszawa.codegen.model.XMLObject
 
 class ReaderModelParser(
     private val reader: SpecsGenericReader,
 ) : ModelParser {
 
     override val model: OpenAPI3
-        get() = OpenAPI3(
-            openapi = reader.specs["openapi"] as String,
-            info = (reader.specs["info"] as Map<String, Any>).toInfoObject(),
-            servers = (reader.specs["servers"] as List<Map<String, Any>>?)?.map { serverSpecs -> serverSpecs.toServerObject() },
-            paths = (reader.specs["paths"] as Map<String, Map<String, Any>>).map { it.key to it.value.toPathItemObject() }.toMap(),
-            components = (reader.specs["components"] as Map<String, Any>?)?.toComponentObject(),
-            security = (reader.specs["security"] as List<Map<String, Any>>?)?.map { it.toSecurity() },
-            tags = (reader.specs["tags"] as List<Map<String, Any>>?)?.map { it.toTagObject() },
-            externalDocs = (reader.specs["externalDocs"] as Map<String, Any>?)?.toExternalDocumentationObject(),
+        get() = reader.specs.toOpenAPI3()
+
+    private fun Map<String, Any>.toOpenAPI3(): OpenAPI3 =
+        OpenAPI3(
+            openapi = this["openapi"] as String,
+            info = (this["info"] as Map<String, Any>).toInfoObject(),
+            jsonSchemaDialect = this["jsonSchemaDialect"] as String?,
+            servers = (this["servers"] as List<Map<String, Any>>?)?.map { serverSpecs -> serverSpecs.toServerObject() },
+            paths = (this["paths"] as Map<String, Map<String, Any>>).map { it.key to it.value.toPathItemObject() }.toMap(),
+            webhooks = (this["paths"] as Map<String, Map<String, Any>>).map { it.key to it.value.toPathItemObject() }.toMap(),
+            components = (this["components"] as Map<String, Any>?)?.toComponentObject(),
+            security = (this["security"] as List<Map<String, Any>>?)?.map { it.toSecurity() },
+            tags = (this["tags"] as List<Map<String, Any>>?)?.map { it.toTagObject() },
+            externalDocs = (this["externalDocs"] as Map<String, Any>?)?.toExternalDocumentationObject(),
         )
 
     private fun Map<String, Any>.toInfoObject(): InfoObject =
@@ -179,6 +186,13 @@ class ReaderModelParser(
             minProperties = this["minProperties"] as Int?,
             required = (this["required"] as Boolean?) ?: false,
             enum = this["enum"] as List<String>?,
+            nullable = (this["nullable"] as Boolean?) ?: false,
+            discriminator = (this["discriminator"] as Map<String, Any>?)?.toDiscriminatorObject(),
+            readOnly = (this["readOnly"] as Boolean?) ?: false,
+            writeOnly = (this["writeOnly"] as Boolean?) ?: false,
+            xml = (this["xml"] as Map<String, Any>?)?.toXMLObject(),
+            example = this["example"] as Map<String, Any>?,
+            deprecated = (this["deprecated"] as Boolean?) ?: false,
     )
 
     private fun Map<String, Any>.toPathItemObject(): PathItemObject =
@@ -253,6 +267,7 @@ class ReaderModelParser(
             securitySchemes = (this["securitySchemes"] as Map<String, Map<String, Any>>?)?.map { it.key to it.value.toSecuritySchemeObject() }?.toMap(),
             links = (this["links"] as Map<String, Map<String, Any>>?)?.map { it.key to it.value.toLinkObject() }?.toMap(),
             callbacks = (this["callbacks"] as Map<String, Map<String, Any>>?)?.map { it.key to it.value.toCallbackObject() }?.toMap(),
+            pathItems = (this["pathItems"] as Map<String, Map<String, Any>>?)?.map { it.key to (it.value as Map<String, Any>).toPathItemObject() }?.toMap(),
         )
 
     private fun Map<String, Any>.toSecuritySchemeObject(): SecuritySchemeObject =
@@ -288,6 +303,21 @@ class ReaderModelParser(
             name = this["name"] as String,
             description = this["description"] as String?,
             externalDocs = (this["externalDocs"] as Map<String, Any>?)?.toExternalDocumentationObject(),
+        )
+
+    private fun Map<String, Any>.toDiscriminatorObject(): DiscriminatorObject =
+        DiscriminatorObject(
+            propertyName = this["propertyName"] as String,
+            mapping = this["mapping"] as Map<String, String>?,
+        )
+
+    private fun Map<String, Any>.toXMLObject(): XMLObject =
+        XMLObject(
+            name = this["name"] as String?,
+            namespace = this["namespace"] as String?,
+            prefix = this["prefix"] as String?,
+            attribute = (this["attribute"] as Boolean?) ?: false,
+            wrapped = (this["wrapped"] as Boolean?) ?: false,
         )
 
     private fun Map<String, Any>.toSecurity(): SecurityRequirementObject = this as Map<String, List<String>>
